@@ -112,6 +112,7 @@ var cookiesToString = {
 	},
 	
 	"netscape" : function(cookies, url) {
+		var maxAllowedExpiration = Math.round((new Date).getTime()/1000) + (preferences.maxCookieAge * preferences.maxCookieAgeType);
 		var string = "";
 		string += "# Netscape HTTP Cookie File\n";
 		string += "# http://curl.haxx.se/rfc/cookie_spec.html\n";
@@ -121,10 +122,10 @@ var cookiesToString = {
 		for(var i=0; i<cookies.length; i++) {
 			cookie = cookies[i];
 			string += 	cookie.domain + "\t" + 
-						cookie.hostOnly.toString().toUpperCase() + "\t" + 
+						(!cookie.hostOnly).toString().toUpperCase() + "\t" + 
 						cookie.path + "\t" + 
 						cookie.secure.toString().toUpperCase() + "\t" + 
-						((cookie.expirationDate != undefined) ? cookie.expirationDate : "0") + "\t" + 
+						((cookie.expirationDate != undefined) ? Math.ceil(cookie.expirationDate) : maxAllowedExpiration.toString()) + "\t" + 
 						cookie.name + "\t" + 
 						cookie.value + ((i==cookies.length-1) ? "" : "\n");
 			
